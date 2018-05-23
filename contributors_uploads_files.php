@@ -14,18 +14,20 @@ if(!function_exists('wp_get_current_user')) {
     include(ABSPATH . "wp-includes/pluggable.php"); 
 }
 
-if ( current_user_can('contributor') && !current_user_can('upload_files') ) 
-	add_action('admin_init', 'allow_contributor_uploads');
+add_action('admin_init', 'allow_contributor_uploads');
  
 function allow_contributor_uploads() {
 	$contributor = get_role('contributor');
 	$contributor->add_cap('upload_files');
 }
 
-add_action( 'init', 'activate_au' );
-function activate_au()
+add_action( 'init', 'contributors_uploads_files_update' );
+
+function contributors_uploads_files_update()
 {
-	require_once ( 'wp_autoupdate.php' );
+	if (!class_exists('WP_AutoUpdate')) 
+		require_once ( 'wp_autoupdate.php' );
+
 	$plugin_current_version = '1.0.0';
 	$plugin_remote_path = 'https://wpdev.yoemprendo.online/update.php?plugin=contributors_uploads_files';
 	$plugin_slug = plugin_basename( __FILE__ );
